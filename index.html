@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimeStream - Watch Anime Online Free</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#ff6b6b',
+                        secondary: '#4ecdc4',
+                        dark: '#0f0f0f',
+                        darker: '#0a0a0a',
+                        card: '#1a1a1a',
+                        surface: '#242424',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.5s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f0f0f;
+            color: #ffffff;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-effect {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        .hover-scale {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #ff6b6b 0%, #4ecdc4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .play-overlay {
+            background: rgba(0,0,0,0.7);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .group:hover .play-overlay {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 glass-effect border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-8">
+                    <a href="#" class="flex items-center gap-2 group">
+                        <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center transform group-hover:rotate-12 transition-transform">
+                            <i class="fas fa-play text-white text-lg"></i>
+                        </div>
+                        <span class="font-display font-bold text-2xl tracking-tight">Anime<span class="gradient-text">Stream</span></span>
+                    </a>
+                    
+                    <div class="hidden md:flex items-center gap-6">
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors font-medium">Home</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors font-medium">Movies</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors font-medium">TV Series</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors font-medium">Most Popular</a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors font-medium">Top Airing</a>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="relative hidden sm:block">
+                        <input type="text" placeholder="Search anime..." 
+                               class="bg-surface border border-gray-700 rounded-full py-2 px-4 pl-10 w-64 focus:outline-none focus:border-primary transition-colors text-sm">
+                        <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <button class="p-2 hover:bg-surface rounded-full transition-colors relative">
+                        <i class="fas fa-bell text-gray-300"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+                    </button>
+                    <button class="md:hidden p-2 hover:bg-surface rounded-lg" onclick="toggleMobileMenu()">
+                        <i class="fas fa-bars text-gray-300"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-darker border-t border-gray-800">
+            <div class="px-4 pt-2 pb-4 space-y-1">
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-surface">Home</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-surface">Movies</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-surface">TV Series</a>
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-surface">Most Popular</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative pt-24 pb-12 overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-gradient-to-t from-dark via-dark/80 to-transparent z-10"></div>
+            <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1920&h=1080&fit=crop" 
+                 alt="Hero Background" class="w-full h-full object-cover opacity-40">
+        </div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+            <div class="flex flex-col lg:flex-row items-center gap-8">
+                <div class="lg:w-1/2 space-y-6 animate-slide-up">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 text-primary text-sm font-medium">
+                        <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                        Trending Now
+                    </div>
+                    <h1 class="font-display text-5xl lg:text-7xl font-bold leading-tight">
+                        Attack on Titan <br>
+                        <span class="gradient-text">Final Season</span>
+                    </h1>
+                    <p class="text-gray-400 text-lg max-w-xl">
+                        Witness the epic conclusion of humanity's struggle for survival. 
+                        Eren Yeager's journey reaches its climax in this masterpiece of animation.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button class="px-8 py-3 bg-primary hover:bg-red-500 rounded-full font-semibold flex items-center gap-2 transition-all transform hover:scale-105">
+                            <i class="fas fa-play"></i>
+                            Watch Now
+                        </button>
+                        <button class="px-8 py-3 bg-surface hover:bg-gray-700 rounded-full font-semibold flex items-center gap-2 transition-all">
+                            <i class="fas fa-plus"></i>
+                            Add to List
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-6 text-sm text-gray-400">
+                        <span class="flex items-center gap-1"><i class="fas fa-star text-yellow-500"></i> 9.8/10</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-calendar"></i> 2023</span>
+                        <span class="flex items-center gap-1"><i class="fas fa-closed-captioning"></i> Sub/Dub</span>
+                        <span class="px-2 py-1 bg-gray-800 rounded text-xs">HD</span>
+                    </div>
+                </div>
+                
+                <div class="lg:w-1/2 relative">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-500">
+                        <img src="https://images.unsplash.com/photo-1541562232579-512a21360020?w=800&h=450&fit=crop" 
+                             alt="Featured Anime" class="w-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-transparent to-transparent"></div>
+                        <button class="absolute inset-0 flex items-center justify-center group">
+                            <div class="w-20 h-20 bg-primary/90 rounded-full flex items-center justify-center transform group-hover:scale-110 transition-transform shadow-lg">
+                                <i class="fas fa-play text-white text-2xl ml-1"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Section -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="font-display text-2xl font-bold flex items-center gap-2">
+                    <i class="fas fa-fire text-primary"></i>
+                    Trending This Week
+                </h2>
+                <a href="#" class="text-primary hover:text-red-400 font-medium flex items-center gap-1 transition-colors">
+                    View All <i class="fas fa-chevron-right text-sm"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6" id="trendingGrid">
+                <!-- Cards will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Episodes -->
+    <section class="py-12 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="font-display text-2xl font-bold flex items-center gap-2">
+                    <i class="fas fa-clock text-secondary"></i>
+                    Latest Episodes
+                </h2>
+                <div class="flex gap-2">
+                    <button class="px-4 py-2 rounded-full bg-primary text-white text-sm font-medium">Sub</button>
+                    <button class="px-4 py-2 rounded-full bg-surface text-gray-400 text-sm font-medium hover:text-white transition-colors">Dub</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4" id="latestGrid">
+                <!-- Cards populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Genres Section -->
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-display text-2xl font-bold mb-8 flex items-center gap-2">
+                <i class="fas fa-tags text-purple-500"></i>
+                Popular Genres
+            </h2>
+            
+            <div class="flex flex-wrap gap-3">
+                <a href="#" class="px-6 py-3 bg-surface hover:bg-primary rounded-full transition-all transform hover:scale-105 font-medium">Action</a>
+                <a href="#" class="px-6 py-3 bg-surface hover:bg-primary rounded-full transition-all transform hover:scale-105 font-medium">Adventure</a>
+                <a href="#" class="px-6 py-3 bg-surface hover:bg-primary rounded-full transition-all transform hover:scale-105 font-medium">Comedy</a>
+                <a href="#" class="px-6 py-3 bg-surface hover:bg-primary rounded-full transition-all transform hover:scale-105 font-medium">Drama</a>
+                <a href="#" class="px-6 py-3 bg-surface hover:bg-primary rounded-full transition-all transform hover:scale-105 font-medium">Fantasy</a>
+                <a href="#" class="px-6 py-3 bg-surface hover:bg-primary rounded-full transition-all transform hover:scale-105 font-medium">Horror</a>
+                <a href="#" class="px-6 py-3 bg-surface hover:bg-primary rounded-full transition-all transform hover:scale-105 font-medium">Isekai</a>
+                <a href="#" class="px-6 py-3 bg-surface hover:bg-primary rounded-full transition-all transform hover:scale-105 font-medium">Mecha</a>
+                <a href="#" class="px-6 py-3 bg-surface hover:bg-primary rounded-full transition-all transform hover:scale-105 font-medium">Romance</a>
+                <a href="#" class="px-6 py-3 bg-surface hover:bg-primary rounded-full transition-all transform hover:scale-105 font-medium">School</a>
+                <a href="#" class="px-6 py-3 bg-surface hover:bg-primary rounded-full transition-all transform hover:scale-105 font-medium">Sci-Fi</a>
+                <a href="#" class="px-6 py-3 bg-surface hover:bg-primary rounded-full transition-all transform hover:scale-105 font-medium">Shounen</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Posts -->
+    <section class="py-12 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="font-display text-2xl font-bold mb-8 flex items-center gap-2">
+                <i class="fas fa-comments text-green-500"></i>
+                Community Discussions
+            </h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="communityGrid">
+                <!-- Community posts populated by JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 text-center">
+                <div class="p-6 rounded-2xl bg-surface hover:bg-card transition-colors group">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-primary/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fas fa-shield-alt text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-lg mb-2">Safe & Secure</h3>
+                    <p class="text-gray-400 text-sm">Minimal ads, maximum safety. We scan 24/7 to keep you protected.</p>
+                </div>
+                
+                <div class="p-6 rounded-2xl bg-surface hover:bg-card transition-colors group">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-secondary/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fas fa-bolt text-secondary text-2xl"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-lg mb-2">Fast Streaming</h3>
+                    <p class="text-gray-400 text-sm">Lightning fast loading speeds with multiple server options.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-surface hover:bg-card transition-colors group">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-purple-500/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fas fa-mobile-alt text-purple-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-lg mb-2">Multi Device</h3>
+                    <p class="text-gray-400 text-sm">Watch on desktop, tablet, or mobile. Seamless experience everywhere.</p>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-surface hover:bg-card transition-colors group">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-yellow-500/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <i class="fas fa-sync-alt text-yellow-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-display font-bold text-lg mb-2">Daily Updates</h3>
+                    <p class="text-gray-400 text-sm">New episodes added daily. Never miss the latest releases.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-darker border-t border-gray-800 pt-12 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div class="col-span-2">
+                    <a href="#" class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
+                            <i class="fas fa-play text-white text-sm"></i>
+                        </div>
+                        <span class="font-display font-bold text-xl">Anime<span class="gradient-text">Stream</span></span>
+                    </a>
+                    <p class="text-gray-400 text-sm max-w-sm mb-4">
+                        The best site to watch anime online for free. Watch subbed and dubbed anime in ultra HD quality without registration.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-surface flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-surface flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-surface flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fab fa-reddit"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-surface flex items-center justify-center hover:bg-primary transition-colors">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-display font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">DMCA</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-display font-bold mb-4">Genres</h4>
+                    <ul class="space-y-2 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Action</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Adventure</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Comedy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Drama</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Fantasy</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-500 text-sm">© 2024 AnimeStream. All rights reserved.</p>
+                <p class="text-gray-600 text-xs">Disclaimer: This site does not store any files on its server. All contents are provided by non-affiliated third parties.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample Data
+        const trendingAnime = [
+            { title: "Jujutsu Kaisen", image: "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?w=400&h=600&fit=crop", rating: "9.7", eps: "24 EP", type: "TV" },
+            { title: "Demon Slayer", image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&h=600&fit=crop", rating: "9.6", eps: "26 EP", type: "TV" },
+            { title: "One Piece", image: "https://images.unsplash.com/photo-1560972550-aba3456b5564?w=400&h=600&fit=crop", rating: "9.5", eps: "1070+ EP", type: "TV" },
+            { title: "Chainsaw Man", image: "https://images.unsplash.com/photo-1607604276583-eef5a0ad8e7f?w=400&h=600&fit=crop", rating: "9.4", eps: "12 EP", type: "TV" },
+            { title: "Spy x Family", image: "https://images.unsplash.com/photo-1581833971358-2c8b550f87b3?w=400&h=600&fit=crop", rating: "9.3", eps: "25 EP", type: "TV" }
+        ];
+
+        const latestEpisodes = [
+            { title: "Solo Leveling", ep: "EP 12", image: "https://images.unsplash.com/photo-1613376023733-0a73315d9b06?w=400&h=300&fit=crop", time: "2 hours ago" },
+            { title: "Frieren", ep: "EP 28", image: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&h=300&fit=crop", time: "4 hours ago" },
+            { title: "Kaiju No.8", ep: "EP 5", image: "https://images.unsplash.com/photo-1541562232579-512a21360020?w=400&h=300&fit=crop", time: "6 hours ago" },
+            { title: "Wind Breaker", ep: "EP 8", image: "https://images.unsplash.com/photo-1560167016-022b78a0258e?w=400&h=300&fit=crop", time: "8 hours ago" },
+            { title: "Mushoku Tensei", ep: "EP 15", image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400&h=300&fit=crop", time: "12 hours ago" },
+            { title: "Black Clover", ep: "EP 170", image: "https://images.unsplash.com/photo-1618336753974-aae8e04506aa?w=400&h=300&fit=crop", time: "1 day ago" }
+        ];
+
+        const communityPosts = [
+            { 
+                avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+                username: "AnimeLover_99",
+                tag: "Recommendation",
+                time: "2 days ago",
+                title: "Top Anime to Start Your Journey!",
+                content: "Categories: Romance: Clannad | Action: Attack On Titan | Adventure: One Piece | Sports: Haikyu!! | Isekai: Mushoku Tensei",
+                likes: 245,
+                comments: 42
+            },
+            { 
+                avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+                username: "SGNK-43_xD",
+                tag: "Discussion",
+                time: "1 day ago",
+                title: "Do you guys have any tips on how to wake up early?",
+                content: "Like at 9-10 AM? I keep missing my morning anime time because I sleep in too late...",
+                likes: 89,
+                comments: 156
+            },
+            { 
+                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&h=100&fit=crop",
+                username: "OtakuKing",
+                tag: "Review",
+                time: "3 days ago",
+                title: "Why Frieren is a Masterpiece",
+                content: "The pacing, the music, the character development... everything about this anime is perfect. Here's my detailed review.",
+                likes: 512,
+                comments: 89
+            }
+        ];
+
+        // Render Functions
+        function renderTrending() {
+            const grid = document.getElementById('trendingGrid');
+            grid.innerHTML = trendingAnime.map((anime, index) => `
+                <div class="group cursor-pointer hover-scale" style="animation: fadeIn 0.5s ease-in-out ${index * 0.1}s both;">
+                    <div class="relative rounded-xl overflow-hidden aspect-[2/3] mb-3">
+                        <img src="${anime.image}" alt="${anime.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        <div class="play-overlay absolute inset-0 flex items-center justify-center">
+                            <div class="w-14 h-14 bg-primary/90 rounded-full flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-300">
+                                <i class="fas fa-play text-white text-lg ml-1"></i>
+                            </div>
+                        </div>
+                        <div class="absolute top-2 right-2 bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold">
+                            ${anime.rating}
+                        </div>
+                        <div class="absolute bottom-2 left-2 bg-primary px-2 py-1 rounded text-xs font-bold">
+                            ${anime.type}
+                        </div>
+                    </div>
+                    <h3 class="font-semibold text-white group-hover:text-primary transition-colors line-clamp-1">${anime.title}</h3>
+                    <p class="text-gray-500 text-sm">${anime.eps}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderLatest() {
+            const grid = document.getElementById('latestGrid');
+            grid.innerHTML = latestEpisodes.map((ep, index) => `
+                <div class="group cursor-pointer" style="animation: slideUp 0.5s ease-out ${index * 0.1}s both;">
+                    <div class="relative rounded-lg overflow-hidden aspect-video mb-2">
+                        <img src="${ep.image}" alt="${ep.title}" class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        <div class="play-overlay absolute inset-0 flex items-center justify-center">
+                            <i class="fas fa-play-circle text-4xl text-white/90 transform scale-0 group-hover:scale-100 transition-transform"></i>
+                        </div>
+                        <div class="absolute bottom-2 right-2 bg-primary px-2 py-0.5 rounded text-xs font-bold">
+                            ${ep.ep}
+                        </div>
+                    </div>
+                    <h4 class="font-medium text-sm text-white group-hover:text-primary transition-colors line-clamp-1">${ep.title}</h4>
+                    <p class="text-gray-500 text-xs mt-1"><i class="far fa-clock mr-1"></i>${ep.time}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderCommunity() {
+            const grid = document.getElementById('communityGrid');
+            grid.innerHTML = communityPosts.map((post, index) => `
+                <div class="bg-surface rounded-2xl p-6 hover:bg-card transition-colors cursor-pointer group" style="animation: fadeIn 0.5s ease-in-out ${index * 0.2}s both;">
+                    <div class="flex items-start gap-3 mb-4">
+                        <img src="${post.avatar}" alt="${post.username}" class="w-10 h-10 rounded-full object-cover border-2 border-gray-700">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-semibold text-sm">${post.username}</span>
+                                <span class="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">#${post.tag}</span>
+                            </div>
+                            <span class="text-xs text-gray-500">${post.time}</span>
+                        </div>
+                    </div>
+                    <h3 class="font-display font-bold text-lg mb-2 group-hover:text-primary transition-colors">${post.title}</h3>
+                    <p class="text-gray-400 text-sm line-clamp-2 mb-4">${post.content}</p>
+                    <div class="flex items-center gap-4 text-sm text-gray-500">
+                        <span class="flex items-center gap-1 hover:text-primary transition-colors"><i class="far fa-heart"></i> ${post.likes}</span>
+                        <span class="flex items-center gap-1 hover:text-secondary transition-colors"><i class="far fa-comment"></i> ${post.comments}</span>
+                        <span class="flex items-center gap-1 hover:text-white transition-colors ml-auto"><i class="fas fa-share"></i></span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTrending();
+            renderLatest();
+            renderCommunity();
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
